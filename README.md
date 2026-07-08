@@ -2,10 +2,10 @@
 Analysis to understand migratory connectivity of three *Phylloscupus* taxa during post-breeding migration in Western Europe. 
 Using stable hydrogen isotopes we compare isotopic signatures at a stopover in West Cornwall, Britain between nominate Common Chiffchaffs *Phylloscopus collybita collybita*, Siberian Chiffchaffs *Phylloscopus collybita tristis* and Yellow-browed Warbler *Phylloscupus inornatus*.
 
-<img src="YBW_illustration.png"
-     alt="Yellow-browed Warbler"
-     width="30%" 
-     height="30%" />
+<p align="center">
+  <img src="YBW_illustration.png"
+       alt="Yellow-browed Warbler"
+       width="30%" />
 
 
 ## *Authors*
