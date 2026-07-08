@@ -64,12 +64,9 @@ YB <-  BL_sub %>%  filter(sci_name == "Phylloscopus inornatus")
 ## eBird Status and Trends, Data Version: 2021; Released: 2022. Cornell Lab of Ornithology, Ithaca, New York. https://doi.org/10.2173/ebirdst.2021
 
 ## Read in the eBird data
-# eB1 <- raster("Spatial/eBird/yebwar3_abundance_seasonal_nonbreeding_mean_2021.tif")
-# plot(eB1)
 eB2 <- raster("Spatial/eBird/yebwar3_abundance_seasonal_postbreeding-migration_mean_2021.tif")
 # plot(eB2)
-# eB3 <- raster("Spatial/eBird/yebwar3_abundance_seasonal_prebreeding-migration_mean_2021.tif")
-# plot(eB3)
+
 
 # ## re prorject raster to the same as the ebird data
 # eB2 <- projectRaster(eB2, crs = crs(BL))
@@ -93,13 +90,6 @@ countries <- ne_coastline(scale = "medium", returnclass = "sf")
 Russia <- ne_countries(scale = "medium", returnclass = "sf", country = "russia")
 countries2 <- ne_countries(scale = "medium", returnclass = "sf")
 
-## Get the elevation layer
-base_topography_map <- getNOAA.bathy(lon1 = -20, lon2 = 180,
-                                     lat1 = -5, lat2 = 80, resolution = 10)
-
-## fortify for plotting
-base_topography_fort = fortify(base_topography_map)
-
 
 
 
@@ -109,11 +99,7 @@ base_topography_fort = fortify(base_topography_map)
 
 ## Create the range map for all three taxonomic groups
 m <- ggplot() + 
-  # Render the bathymetry map
-  # geom_raster(data = base_topography_fort, aes(x=x, y=y, fill=z), alpha = 0.6) +
-  # scale_fill_viridis_c(option="mako", guide = "none") +
-  # new_scale_fill() +
-  
+
   # add the filled in countries
   geom_sf(data = countries2, aes(geometry = geometry), fill = "#BDC3C7", colour = "#BDC3C7", alpha = 0.6) +
   new_scale_fill() +
@@ -122,7 +108,7 @@ m <- ggplot() +
   geom_sf(data = Col, aes(geometry = geometry, fill = "#6f9969"), colour = NA, alpha = 1) +
   geom_sf(data = YB, aes(geometry = geometry, fill = "#808fe1"), colour = NA, alpha = 1) +
   geom_sf(data = Tris, aes(geometry = geometry, colour = "#efc86e"), fill = NA, alpha = 1, size = 1) +
-  scale_fill_manual(name = expression("Taxonomic Group"*":"),
+  scale_fill_manual(name = expression("Taxa"*":"),
                     values =c("#6f9969"="#6f9969", "#808fe1"="#808fe1"),
                     labels = c("P. c. collybita      ", "P. inornatus")) +
   scale_colour_manual(name = "",
@@ -160,7 +146,7 @@ m
 ## Save the map
 ggsave(plot = m, 
        filename = "Outputs/Range_map_Nobathy.png",
-       units = "mm", width = 200, height = 150, dpi = 300,   
+       units = "mm", width = 230, height = 150, dpi = 360,   
 )
 
 
@@ -447,7 +433,7 @@ Im <- ggplot() +
   geom_sf(data = Col3, aes(geometry = geometry, colour = "#6f9969"), fill = NA, alpha = 1, linetype = "solid", size = 0.75) +
   geom_sf(data = YB2, aes(geometry = geometry, colour = "#808fe1"), fill = NA, alpha = 1, linetype = "solid", size = 0.75) +
   geom_sf(data = Tris2, aes(geometry = geometry, colour = "#efc86e"), fill = NA, alpha = 1, linetype = "solid", size = 0.75) +
-  scale_colour_manual(name = expression("Taxonomic Group"*":"),
+  scale_colour_manual(name = expression("Taxa"*":"),
                     values =c("#6f9969"="#6f9969", "#808fe1"="#808fe1", "#efc86e"="#efc86e"),
                     labels = c("P. c. collybita", "P. inornatus", "P. c. trisits")) +
   
@@ -471,7 +457,7 @@ Im <- ggplot() +
         legend.text=element_text(size=10, face="italic"), legend.position = "bottom",
         axis.title = element_blank(), legend.title= element_text(size=12, face="bold"),
         legend.box.background=element_rect(colour = "#BDC3C7"),legend.box.margin=margin(1,1,1,1),
-        legend.box="vertical")
+        legend.box="horizontal")
 
 
 ## save the combined plot
