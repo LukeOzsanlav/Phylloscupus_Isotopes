@@ -5,7 +5,7 @@
 
 ## Packages reuqired
 pacman::p_load(tidyverse, data.table, sf, raster, rnaturalearth, patchwork,
-               ggspatial, marmap, ggnewscale, cowplot, ggpubr, png)
+               ggspatial, marmap, ggnewscale, cowplot, ggpubr, png, ggpattern)
 
 
 
@@ -97,58 +97,146 @@ countries2 <- ne_countries(scale = "medium", returnclass = "sf")
 #### 3. Create range map for Chiffs and YBW ####
 #----------------------------------------------#
 
-## Create the range map for all three taxonomic groups
-m <- ggplot() + 
 
-  # add the filled in countries
-  geom_sf(data = countries2, aes(geometry = geometry), fill = "#BDC3C7", colour = "#BDC3C7", alpha = 0.6) +
+
+# Create seasonal categories
+Col$seasonal_type <- factor(
+  Col$seasonal,
+  levels = c(1, 2, 3),
+  labels = c("Res", "Breed", "Non-breed")
+)
+
+YB$seasonal_type <- factor(
+  YB$seasonal,
+  levels = c(1, 2, 3),
+  labels = c("Res", "Breed", "Non-breed")
+)
+
+Tris$seasonal_type <- factor(
+  Tris$seasonal,
+  levels = c(1, 2, 3),
+  labels = c("Res", "Breed", "Non-breed")
+)
+
+
+# Create plot
+m <- ggplot() +
+  
+  # Countries background
+  geom_sf(
+    data = countries2,
+    aes(geometry = geometry),
+    fill = "#BDC3C7",
+    colour = "#BDC3C7",
+    alpha = 0.6
+  ) +
+  
   new_scale_fill() +
   
-  # add the range areas
-  geom_sf(data = Col, aes(geometry = geometry, fill = "#6f9969"), colour = NA, alpha = 1) +
-  geom_sf(data = YB, aes(geometry = geometry, fill = "#808fe1"), colour = NA, alpha = 1) +
-  geom_sf(data = Tris, aes(geometry = geometry, colour = "#efc86e"), fill = NA, alpha = 1, size = 1) +
-  scale_fill_manual(name = expression("Taxa"*":"),
-                    values =c("#6f9969"="#6f9969", "#808fe1"="#808fe1"),
-                    labels = c("P. c. collybita      ", "P. inornatus")) +
-  scale_colour_manual(name = "",
-                    values =c("#efc86e"="#efc86e"),
-                    labels = c("P. c. trisits")) +
+  # P. c. collybita
+  geom_sf(data = Col,
+          aes( geometry = geometry, fill = seasonal_type), colour = NA, alpha = 1
+  ) +
   
-  # add the coastoutline
-  #geom_sf(data = countries, aes(geometry = geometry), size = 0.2) +
+  scale_fill_manual(
+    name = expression("P. c. collybita"),
+    values = c(
+      "Res" = "#6f9969",
+      "Breed" = "#9fc28f",
+      "Non-breed" = "#3f7040"
+    )) +
   
-  # add map extras
-  annotation_scale(location = "br", width_hint = 0.1, pad_y = unit(0.25, "in")) +
-  annotation_north_arrow(location = "br", which_north = "true",
-                         pad_x = unit(0.2, "in"), pad_y = unit(0.5, "in"),
-                         style = north_arrow_orienteering,
-                         height = unit(0.8, "cm"), width = unit(0.5, "cm"),) +
+  new_scale_fill() +
   
-  # set amp limits
-  coord_sf(xlim = c(-20, 180),
-           ylim = c(-5, 80), crs = 4326, expand = F) +
+  # P. inornatus
+  geom_sf(
+    data = YB,
+    aes(geometry = geometry,fill = seasonal_type),
+    colour = NA, alpha = 1
+  ) +
   
-  guides(color = guide_legend(order = 0),
-         fill  = guide_legend(order = 1)) +
+  scale_fill_manual(
+    name = expression("P. inornatus"),
+    values = c(
+      "Res" = "#808fe1",
+      "Breed" = "#aeb8f3",
+      "Non-breed" = "#5365c4"
+    )) +
   
-  # Plot styling
+  new_scale_fill() +
+  
+  # P. c. tristis - striped transparent overlay
+  geom_sf_pattern(
+    data = Tris,
+    aes(geometry = geometry, pattern_fill = seasonal_type
+    ),
+    fill = NA,
+    colour = NA,
+    pattern = "stripe",
+    pattern_angle = 45,
+    pattern_colour = NA,
+    pattern_density = 0.6,
+    pattern_spacing = 0.01,
+    pattern_size = 0.08,
+    pattern_alpha = 0.9,
+  ) +
+  
+  scale_pattern_fill_manual(
+    name = expression("P. c. tristis"),
+    values = c(
+      "Res" = "#efc86e",
+      "Breed" = "#f6dda0",
+      "Non-breed" = "#d89f2e"
+    )
+  ) +
+  
+  # Map scale bar
+  annotation_scale(
+    location = "br",
+    width_hint = 0.1,
+    pad_y = unit(0.25, "in")
+  ) +
+  
+  # North arrow
+  annotation_north_arrow(
+    location = "br",
+    which_north = "true",
+    pad_x = unit(0.2, "in"),
+    pad_y = unit(0.5, "in"),
+    style = north_arrow_orienteering,
+    height = unit(0.8, "cm"),
+    width = unit(0.5, "cm")
+  ) +
+  
+  # Map limits
+  coord_sf(xlim = c(-20, 180), ylim = c(-5, 80),
+           crs = 4326, expand = FALSE  ) +
+  
+  # Legends
+  guides(fill = guide_legend(order = 1), pattern_fill = guide_legend(order = 3) ) +
+  
+  # Styling
   theme_light() +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        legend.text=element_text(size=10, face="italic"), legend.position = "bottom",
-        axis.title = element_blank(), legend.title= element_text(size=14, face="bold"),
-        legend.box.background=element_rect(colour = "#BDC3C7"),legend.box.margin=margin(1,1,1,1),
-        legend.spacing.x = unit(0.1, "cm"))
-  
-m
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.text = element_text(size = 10,face = "italic", margin = margin(l = 2)),
+    legend.position = "bottom",
+    axis.title = element_blank(),
+    legend.title = element_text(size = 12, face = "bold"),
+    legend.box.background = element_rect(colour = "#BDC3C7" ),
+    legend.box.margin = margin(0.5, 0.5, 0.5, 0.5),
+    legend.key.width = unit(0.5, "cm"),
+    legend.key.height = unit(0.5, "cm"),
+    legend.spacing.x = unit(0.05, "cm"))
+
 
 
 ## Save the map
 ggsave(plot = m, 
-       filename = "Outputs/Range_map_Nobathy.png",
+       filename = "Outputs/Fig1_Range_map.png",
        units = "mm", width = 230, height = 150, dpi = 360,   
 )
-
 
 
 
@@ -353,7 +441,7 @@ m4 <- ggplot() +
 ## Add YBW pic ##
 
 ## Now read in the YBW image
-YB_im <- readPNG("YBW illustration.png", native = TRUE)
+YB_im <- readPNG("YBW_illustration.png", native = TRUE)
 
 m3_2 <- ggplot()+                  # Combine plot & image
   inset_element(p = YB_im,
@@ -417,28 +505,19 @@ Col3 <- Col2 %>% st_union() %>% st_simplify(dTolerance = 15000)
 ## create the plot of the istopes and ranges
 Im <- ggplot() + 
   
-  # Render the eBird map
+  # Render the isotope map
   geom_raster(data = Precip_df, aes(x=x, y=y, fill=d2h_GS)) +
-  scale_fill_gradient2(low= "#000000", high = "#FFFFFF", name = expression(delta^2*H*"  "*("‰")), midpoint = -10,
-                       guide = guide_colorbar(frame.colour = "#BDC3C7", ticks = TRUE, title.vjust = 1)) +
-  # scale_fill_viridis_c(option="inferno", begin = 0,
-  #                      end = 1, name = expression(delta^2*H*"  "*("‰"))) +
+  scale_fill_viridis_c(option = "magma", name = expression(delta^2*H*"  "*("‰")), alpha = 0.7) +
   new_scale_fill() +
   
-  # # add the filled in countries
-  # geom_sf(data = countries2, aes(geometry = geometry), fill = "#BDC3C7", colour = "#BDC3C7", alpha = 0.6) +
-  # new_scale_fill() +
   
   # add the range areas
-  geom_sf(data = Col3, aes(geometry = geometry, colour = "#6f9969"), fill = NA, alpha = 1, linetype = "solid", size = 0.75) +
-  geom_sf(data = YB2, aes(geometry = geometry, colour = "#808fe1"), fill = NA, alpha = 1, linetype = "solid", size = 0.75) +
-  geom_sf(data = Tris2, aes(geometry = geometry, colour = "#efc86e"), fill = NA, alpha = 1, linetype = "solid", size = 0.75) +
-  scale_colour_manual(name = expression("Taxa"*":"),
-                    values =c("#6f9969"="#6f9969", "#808fe1"="#808fe1", "#efc86e"="#efc86e"),
-                    labels = c("P. c. collybita", "P. inornatus", "P. c. trisits")) +
-  
-  # add the coastoutline
-  #geom_sf(data = countries, aes(geometry = geometry), size = 0.2) +
+  # geom_sf(data = Col3, aes(geometry = geometry, colour = "#6f9969"), fill = NA, alpha = 1, linetype = "solid", size = 0.8) +
+  # geom_sf(data = YB2, aes(geometry = geometry, colour = "#808fe1"), fill = NA, alpha = 1, linetype = "solid", size = 0.8) +
+  # geom_sf(data = Tris2, aes(geometry = geometry, colour = "#efc86e"), fill = NA, alpha = 1, linetype = "solid", size = 0.8) +
+  # scale_colour_manual(name = expression("Taxa"*":"),
+  #                   values =c("#6f9969"="#6f9969", "#808fe1"="#808fe1", "#efc86e"="#efc86e"),
+  #                   labels = c("P. c. collybita", "P. inornatus", "P. c. trisits")) +
   
   # add map extras
   annotation_scale(location = "br", width_hint = 0.1, pad_y = unit(0.15, "in")) +
@@ -456,13 +535,13 @@ Im <- ggplot() +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         legend.text=element_text(size=10, face="italic"), legend.position = "bottom",
         axis.title = element_blank(), legend.title= element_text(size=12, face="bold"),
-        legend.box.background=element_rect(colour = "#BDC3C7"),legend.box.margin=margin(1,1,1,1),
         legend.box="horizontal")
+
 
 
 ## save the combined plot
 ggsave(plot = Im, 
-       filename = "Outputs/Isotope_range_map.png",
+       filename = "Outputs/Fig2_Isotope_map.png",
        units = "mm", width = 200, height = 130, dpi = 300,   
 )
 
