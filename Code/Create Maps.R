@@ -1,9 +1,9 @@
-## Luke Ozsanlav-Harris
+## Author: XXX
 ## Created: 01/02/2023
 
 ## Create range map of YBW and Chiffchaffs for manuscript
 
-## Packages reuqired
+## Packages required
 pacman::p_load(tidyverse, data.table, sf, raster, rnaturalearth, patchwork,
                ggspatial, marmap, ggnewscale, cowplot, ggpubr, png, ggpattern)
 

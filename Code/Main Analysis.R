@@ -1,4 +1,4 @@
-## Luke Ozsanlav-Harris
+## Author: XXX
 ## Created: 15/11/2022
 
 ## Analysis of the stable isotope, morphometric and phenological data from Chiffchaff and YBW
