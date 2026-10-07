@@ -1,6 +1,7 @@
 # Understanding connectivty in *Phylloscopus* warblers
 Analysis to understand migratory connectivity of three *Phylloscupus* taxa during post-breeding migration in Western Europe. 
 Using stable hydrogen isotopes we compare isotopic signatures at a stopover in West Cornwall, Britain between nominate Common Chiffchaffs *Phylloscopus collybita collybita*, Siberian Chiffchaffs *Phylloscopus collybita tristis* and Yellow-browed Warbler *Phylloscupus inornatus*.
+https://doi.org/10.5281/zenodo.23214361
 
 <p align="center">
   <img src="YBW_illustration.png"
