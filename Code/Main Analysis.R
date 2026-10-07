@@ -51,6 +51,10 @@ YBW <- YBW %>%
 ## Join the Yellow brow and the chiff data
 Iso <- plyr::rbind.fill(Chiff, YBW)
 
+## Adjust my isotope values to the new values of Soto et al. (2017) of -35.3 permil based on equilibration with water standards and a Cr-filled reactor   
+## Soto et al. (2017) list KHS = −47.5 ± 1.0‰ as a previously assigned value whihc is what i originally used
+offset <- -35.3-(-47.5)
+Iso <- Iso |> mutate(isotope= (isotope+offset))
 
 
 
@@ -134,6 +138,7 @@ anova(lm(Iso$Cap_yday~ Iso$subspecies))
 ##-------------------------##
 
 ## Remove Abeatinus 
+IsoA <- Iso # save full data for creating Sup figure 1
 Iso <- Iso |> filter(!subspecies == "A")
 
 ## Change Abeatinus to collybita
@@ -176,6 +181,7 @@ anova(mod1, mod)
 
 ## Get summary of the model with the weight, seems like all the groups are different but Tristis is a lot lower
 summary(mod1)
+confint(mod1)
 anova(mod1)
 
 ## plot the model effects
@@ -190,18 +196,18 @@ emmeans(mod1, mode = "appx-satterthwaite", specs = pairwise ~ subspecies)
 ## rename the sub-species columns first for plotting
 BoxPlot <- IsoMod1 %>%                              
                 mutate(subspecies = ifelse(subspecies == "C", "P. c. collybita",
-                                                  ifelse(subspecies == "T", "P. c. trisits", "P. inornatus")))
+                                                  ifelse(subspecies == "T", "P. c. tristis", "P. inornatus")))
 
 IsoModBox <- IsoMod1 %>%                              
               mutate(subspecies = ifelse(subspecies == "C", "P. c. collybita",
-                                                ifelse(subspecies == "T", "P. c. trisits", "P. inornatus")))
+                                                ifelse(subspecies == "T", "P. c. tristis", "P. inornatus")))
 
 ## create the plot with significance bars
 bp1 <- ggplot(data = BoxPlot, aes(y = isotope, x = subspecies, fill = subspecies)) + 
-  geom_jitter(data = IsoModBox, aes(y = isotope, x = subspecies), stroke = 1, alpha = 0.4, colour = "darkgrey", width = 0.1) +
+  geom_jitter(data = IsoModBox, aes(y = isotope, x = subspecies), stroke = 1, alpha = 0.5, colour = "darkgrey", width = 0.1) +
   geom_boxplot(alpha = 0.5, width = 0.4) +
-  geom_signif(comparisons = list(c("P. c. collybita", "P. c. trisits")), map_signif_level = TRUE, colour = "black", y_position = -40) +
-  geom_signif(comparisons = list(c("P. c. collybita", "P. inornatus")), map_signif_level = TRUE, colour = "black", y_position = -32.5) +
+  geom_signif(comparisons = list(c("P. c. collybita", "P. c. tristis")), map_signif_level = TRUE, colour = "black", y_position = -28) +
+  geom_signif(comparisons = list(c("P. c. collybita", "P. inornatus")), map_signif_level = TRUE, colour = "black", y_position = -20.5) +
   theme_light() +
   scale_y_continuous(breaks = seq(-140, -20, by = 20)) +
   scale_fill_manual(values=c("#6f9969", "#efc86e", "#808fe1")) +
@@ -214,10 +220,56 @@ ggsave(plot = bp1, filename =  "Outputs/Fig3_BoxPlot_Comparison of H2 between gr
        width = 14, height = 14, units = "cm")
 
 
+##-----------------------##
+#### 5.1 Sup Figure 1 ####
+##----------------------##
+
+## Model how hydrogen isotope varies across the different sub-species
+## Will need to account for heteroscedacisity between groups, Robbie said this was a problem in the thesis
+## I can control for this so will model all three sub-species at once
+
+## set variables to the correct class
+IsoA$subspecies <- as.factor(IsoA$subspecies)
+
+## drop rows with missing data
+IsoAMod1 <- IsoA %>% drop_na(isotope, subspecies)
+
+## Make the plot for the paper
+## rename the sub-species columns first for plotting
+BoxPlot <- IsoA %>%                              
+  mutate(subspecies = ifelse(subspecies == "C", "P. c. collybita",
+                             ifelse(subspecies == "A", "Intermediate", 
+                                    ifelse(subspecies == "T", "P. c. tristis", "P. inornatus"))))
+
+IsoAModBox <- IsoAMod1 %>%                              
+  mutate(subspecies = ifelse(subspecies == "C", "P. c. collybita",
+                             ifelse(subspecies == "A", "Intermediate", 
+                                    ifelse(subspecies == "T", "P. c. tristis", "P. inornatus"))))
+
+## create the plot with significance bars
+bpS <- ggplot(data = BoxPlot, aes(y = isotope, x = subspecies, fill = subspecies)) + 
+  geom_jitter(data = IsoAModBox, aes(y = isotope, x = subspecies), stroke = 1, alpha = 0.5, colour = "darkgrey", width = 0.1) +
+  geom_boxplot(alpha = 0.5, width = 0.4, outlier.shape = NA) +
+  geom_signif(comparisons = list(c("P. c. collybita", "P. c. tristis")), map_signif_level = TRUE, colour = "black", y_position = -40+offset) +
+  geom_signif(comparisons = list(c("Intermediate", "P. c. tristis")), map_signif_level = TRUE, colour = "black", y_position = -35+offset) +
+  geom_signif(comparisons = list(c("Intermediate", "P. inornatus")), map_signif_level = TRUE, colour = "black", y_position = -30+offset) +
+  geom_signif(comparisons = list(c("P. c. collybita", "P. inornatus")), map_signif_level = TRUE, colour = "black", y_position = -25+offset) +
+  theme_light() +
+  scale_y_continuous(breaks = seq(-140, -20, by = 20)) +
+  scale_fill_manual(values=c("#882255", "#6f9969", "#efc86e", "#808fe1")) +
+  ylab(expression(delta^2*H*"  "*("‰"))) + xlab("Taxa") +
+  theme(legend.position = "blank", axis.text=element_text(size=11), panel.grid.minor = element_blank(),
+        axis.text.x = element_text(face = "italic"), axis.title=element_text(size=13), panel.grid.major.x = element_blank())
+
+## save the plot
+ggsave(plot = bpS, filename =  "Outputs/FigS1_BoxPlot Comparison of H2.png",
+       width = 14, height = 14, units = "cm")
+
+
 
 
 ##----------------------------------##
-#### 5. Hydrogen Isotope variance ####
+#### 6. Hydrogen Isotope variance ####
 ##----------------------------------##  
 
 ## filter the data if needed to remove the outlier
@@ -234,7 +286,6 @@ leveneTest(lm(isotope~ subspecies, data= IsoMod4))
 IsoMod5 <- IsoMod2 %>% filter(subspecies == "C" | subspecies == "T")
 leveneTest(lm(isotope~ subspecies, data= IsoMod5))
 
-
 ## **Alternative way** Compare all groups at once which we aren't interested in
 ## use Anova and Tukeys test to do post hoc comparison of variance
 IsoMod2 <- IsoMod2 %>%
@@ -249,8 +300,6 @@ levene.dat.aov <- aov(iso_med_res ~ subspecies, IsoMod2)
 summary(levene.dat.aov)
 TukeyHSD(levene.dat.aov)
 
-leveneTest()
-
 
 ## Make summary of the data
 Data_Sum <- IsoMod2 %>% 
@@ -262,7 +311,7 @@ Data_Sum <- IsoMod2 %>%
 
 
 ##------------------------------------------##
-#### 6. Hydrogen Isotope vs Morphometrics ####
+#### 7. Hydrogen Isotope vs Morphometrics ####
 ##------------------------------------------##
 
 ## Model how hydrogen isotopes vary with arrival date, wing length, wing pointedness and mass
@@ -280,29 +329,35 @@ Iso %>% dplyr::select(Cap_yday, wing, pointedness, weight, condition) %>% group_
 ## Now create three data sets, one for each subspecies
 ## dropping the rows with missing data for each along the way
 # Iso <- Iso %>% filter(!(subspecies == "A" & isotope < -90)) # drop outlier
-Coll <- Iso %>% filter(subspecies == "C") %>% drop_na(wing, Cap_yday, isotope)
+Coll <- Iso %>% filter(subspecies == "C") %>% drop_na(wing, Cap_yday, isotope) |> mutate(age = as.factor(age))
 # Abie <- Iso %>% filter(subspecies == "A") %>% drop_na(wing, Cap_yday, isotope)
 Tris <- Iso %>% filter(subspecies == "T") %>% drop_na(wing, Cap_yday, isotope)
 Yellow <- Iso %>% filter(subspecies == "YBW") %>% drop_na(wing, Cap_yday, isotope)
+table(Iso$subspecies)
+nrow(Coll); nrow(Tris); nrow(Yellow)
+table(Coll$age); table(Tris$age); table(Yellow$age)
 
 
 ## convert the values in the Ornis fennica paper to correct for different Kudu horn standards
-offset <- -47.5-(-54.1)
--107.9+offset # mean
--127.2+offset # lower range
--97.0+offset # upper range
+offset2 <- -35.3-(-54.1)
+-107.9+offset2 # mean
+-127.2+offset2 # lower range
+-97.0+offset2 # upper range
 range(Yellow$isotope)
+mean(Yellow$isotope)
 
 
-#### 6.1 MODEL: Collybita ####
+#### 7.1 MODEL: Collybita ####
 ## Add interactions between the sub species and the other explanatory variables
-ModColl <- gls(isotope ~ scale(wing) + scale(Cap_yday),
+ModColl <- gls(isotope ~ scale(wing) + scale(Cap_yday) + age,
                data=Coll, 
                method="ML")
 
 # get model summaries
 summary(ModColl) # significant effect of wing length (negative relationship)
+confint(ModColl)
 anova(ModColl)
+
 
 # plot the predictor effects
 ModColleffects <- predictorEffects(ModColl)
@@ -341,7 +396,7 @@ C1 <- ggplot(mapping= aes(x= wing, y = fit)) +
 
 
 
-#### 6.2 MODEL: Abietinus ####
+#### 7.2 MODEL: Abietinus ####
 # ## Add interactions between the sub species and the other explanatory variables
 # ModAbie <- gls(isotope ~ scale(wing) + scale(Cap_yday),
 #                data=Abie, 
@@ -370,7 +425,7 @@ C1 <- ggplot(mapping= aes(x= wing, y = fit)) +
 
 
 
-#### 6.3 MODEL: Tristis ####
+#### 7.3 MODEL: Tristis ####
 ## Add interactions between the sub species and the other explanatory variables
 ModTris <- gls(isotope ~ scale(wing) + scale(Cap_yday),
                data=Tris, 
@@ -379,6 +434,7 @@ ModTris <- gls(isotope ~ scale(wing) + scale(Cap_yday),
 # get model summaries
 summary(ModTris)
 anova(ModTris)
+confint(ModTris)
 
 # plot the predictor effects
 ModTriseffects <- predictorEffects(ModTris)
@@ -400,7 +456,7 @@ setnames(fitTris, old = c("effectsTris[[\"wing\"]][[\"fit\"]]", "effectsTris[[\"
 
 
 
-#### 6.4 MODEL: Yellow-Brow ####
+#### 7.4 MODEL: Yellow-Brow ####
 ## Add interactions between the sub species and the other explanatory variables
 ModYBW <- gls(isotope ~ scale(wing) + scale(Cap_yday),
                data=Yellow, 
@@ -409,6 +465,7 @@ ModYBW <- gls(isotope ~ scale(wing) + scale(Cap_yday),
 # get model summaries
 summary(ModYBW) # non-significant effect of wing length p =0.098 (negative relationship)
 anova(ModYBW)
+confint(ModYBW)
 
 # plot the predictor effects
 ModYBWeffects <- predictorEffects(ModYBW)
@@ -446,7 +503,7 @@ YB1 <- ggplot(mapping= aes(x= wing, y = fit)) +
 
 
 
-#### 6.5 PLOT: All Groups ####
+#### 7.5 PLOT: All Groups ####
 
 ## Bind the data used in the models
 PlotWing <- rbind(Coll, Yellow, Tris)
@@ -465,8 +522,8 @@ GR1 <- ggplot(mapping= aes(x= wing, y = fit, group = subspecies, colour = subspe
   geom_line(data= PlotFits, size = 1.25)  +
   xlab("Wing Length/mm") + ylab(expression(delta^2*H*"  "*("‰"))) + labs(colour = "Taxa") +
   scale_colour_manual(values=c( "#6f9969", "#efc86e", "#808fe1"), 
-                      labels=c("P. c. collybita", "P. c. trisits", "P. inornatus")) +
-  annotate("text", x = 54, y = -59.5, colour = "#6f9969", size = 14, label = "*") +
+                      labels=c("P. c. collybita", "P. c. tristis", "P. inornatus")) +
+  annotate("text", x = 54, y = -47.5, colour = "#6f9969", size = 14, label = "*") +
   theme_bw() +
   theme(panel.grid.minor.y = element_blank(),
         axis.title=element_text(size=18),
@@ -486,7 +543,7 @@ ggsave(plot = GR1,
 
 
 ##--------------------------------------##
-#### 7. Arrival date vs Morphometrics ####
+#### 8. Arrival date vs Morphometrics ####
 ##--------------------------------------##
 
 ## Model how capture date it related to various sub-species variables
@@ -502,16 +559,16 @@ Iso %>% dplyr::select(Cap_yday, wing, fat, condition) %>% group_by() %>% summary
 ## Now create three data sets, one for each subspecies
 ## dropping the rows with missing data for each along the way
 # aIso <- Iso %>% filter(!(subspecies == "A" & isotope < -90)) # drop outlier
-Coll2 <- Iso %>% filter(subspecies == "C") %>% drop_na(Cap_yday, wing, fat, isotope)
+Coll2 <- Iso %>% filter(subspecies == "C") %>% drop_na(Cap_yday, wing, isotope) |> mutate(age = as.factor(age))
 # Abie2 <- Iso %>% filter(subspecies == "A") %>% drop_na(Cap_yday, wing, fat, isotope)
-Tris2 <- Iso %>% filter(subspecies == "T") %>% drop_na(Cap_yday, wing, fat, isotope)
-YBW2 <- Iso %>% filter(subspecies == "YBW") %>% drop_na(Cap_yday, wing, fat, isotope)
+Tris2 <- Iso %>% filter(subspecies == "T") %>% drop_na(Cap_yday, wing, isotope)
+YBW2 <- Iso %>% filter(subspecies == "YBW") %>% drop_na(Cap_yday, wing, isotope)
 
 
 
-#### 7.1 MODEL: Collybita ####
+#### 8.1 MODEL: Collybita ####
 ## Add interactions between the sub species and the other explanatory variables
-ModColl2 <- gls(Cap_yday ~ scale(wing),
+ModColl2 <- gls(Cap_yday ~ scale(wing) + age,
                 data=Coll2, 
                 method="ML")
 
@@ -556,7 +613,7 @@ plot(ModColl2effects)
 
 
 
-#### 7.2 MODEL: Abietinus ####
+#### 8.2 MODEL: Abietinus ####
 ## Add interactions between the sub species and the other explanatory variables
 # ModAbie2 <- gls(Cap_yday ~ scale(wing),
 #                 data=Abie2, 
@@ -586,7 +643,7 @@ plot(ModColl2effects)
 
 
 
-#### 7.3 MODEL: Tristis ####
+#### 8.3 MODEL: Tristis ####
 ## Add interactions between the sub species and the other explanatory variables
 ModTris2 <- gls(Cap_yday ~ scale(wing),
                 data=Tris2, 
@@ -616,7 +673,7 @@ plot(ModTris2effects)
 
 
 
-#### 7.4 MODEL: Yellow_brow ####
+#### 8.4 MODEL: Yellow_brow ####
 ## Add interactions between the sub species and the other explanatory variables
 ModYBW2 <- gls(Cap_yday ~ scale(wing),
                data=YBW2, 
@@ -645,7 +702,7 @@ plot(ModYBW2effects)
 
 
 
-# #### 7.5 PLOT: All Groups ####
+# #### 8.5 PLOT: All Groups ####
 # 
 # ## Bind the data used in the models
 # PlotCond <- rbind(Coll2, YBW2, Tris2, Abie2)
@@ -663,7 +720,7 @@ plot(ModYBW2effects)
 #   geom_line(data= PlotFits2, size = 1.25)  +
 #   xlab("Body Condition/scaled mass index") + ylab("Capture year day") + labs(colour = "Taxonomic Group") +
 #   scale_colour_manual(values=c("#DDCC77", "#882255", "#88CCEE", "#117733"), 
-#                       labels=c("P. c. abietinus", "P. c. collybita", "P. c. trisits", "P. inornatus")) +
+#                       labels=c("P. c. abietinus", "P. c. collybita", "P. c. tristis", "P. inornatus")) +
 #   theme_bw() +
 #   theme(panel.grid.minor.y = element_blank(),
 #         axis.title=element_text(size=18),
