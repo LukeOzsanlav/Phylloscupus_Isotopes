@@ -1,6 +1,6 @@
 # Understanding connectivty in *Phylloscopus* warblers
 Analysis to understand migratory connectivity of three *Phylloscupus* taxa during post-breeding migration in Western Europe. 
-Using stable hydrogen isotopes we compare isotopic signatures at a stopover in West Cornwall, Britain between nominate Common Chiffchaffs *Phylloscopus collybita collybita*, Siberian Chiffchaffs *Phylloscopus collybita tristis* and Yellow-browed Warbler *Phylloscupus inornatus*.
+Using stable hydrogen isotopes we compare isotopic signatures at stopovers in West Cornwall, Britain between nominate Common Chiffchaffs *Phylloscopus collybita collybita*, Siberian Chiffchaffs *Phylloscopus collybita tristis* and Yellow-browed Warblers *Phylloscupus inornatus*.
 
 [![DOI](https://zenodo.org/badge/524048974.svg)](https://zenodo.org/doi/10.5281/zenodo.23214361)
 
@@ -30,14 +30,7 @@ Using stable hydrogen isotopes we compare isotopic signatures at a stopover in W
      
 ## Abstract
 
-Understanding migratory connectivity is fundamental to interpreting range dynamics and understanding the drivers of population change. 
-Stable hydrogen isotope ratios can be used to infer the provenance of individual migrants due to predictable broad-scale spatial trends. 
-We compare hydrogen isotopes (δ2H) among and within three *Phylloscopus* taxa occurring in Britain during post-breeding migration to understand patterns of connectivity. 
-We found that δ2H values of Common Chiffchaffs *Phylloscopus collybita collybita* were significantly different and non-overlapping compared to both Siberian Chiffchaffs *Phylloscopus collybita tristis* and Yellow-browed Warblers *Phylloscopus inornatus* but there was no difference between Siberian Chiffchaffs and Yellow-browed Warblers. 
-There was a significant negative correlation between wing length and δ2H in the western Common Chiffchaffs. 
-A negative but weakly supported trend between wing length and δ2H was also found in Yellow-browed Warblers with no relationship found in Siberian Chiffchaffs. 
-Our results suggest broad geographic structuring within Common Chiffchaffs passing through Britain but weak evidence for this in Yellow-browed Warblers and Siberian Chiffchaffs. 
-The origins of Yellow-browed Warblers and Siberian Chiffchaffs are likely largely overlapping and unlikely to be isolated to the western range edge. 
+Understanding migratory connectivity is fundamental to interpreting range dynamics and determining the drivers of population change. Stable hydrogen isotope ratios can be used to infer the provenance of individual migrants due to predictable broad-scale spatial trends. We compare hydrogen isotopes (δ²H) among and within three *Phylloscopus* taxa occurring in Britain during post-breeding migration to characterise patterns of connectivity. δ²H values of nominate Common Chiffchaffs *Phylloscopus collybita collybita* were significantly higher than, and did not overlap with, those of Siberian Chiffchaffs *P. c. tristis* or Yellow-browed Warblers *P. inornatus*. We found no evidence of a difference between the latter two taxa. There was a significant negative relationship between wing length and δ²H in the nominate Common Chiffchaffs. A negative but weakly supported trend between wing length and δ²H was also found in Yellow-browed Warblers with no relationship found in Siberian Chiffchaffs. Our results suggest broad geographic structuring within nominate Common Chiffchaffs passing through Britain but weak evidence for this in Yellow-browed Warblers and Siberian Chiffchaffs. The origins of Yellow-browed Warblers and Siberian Chiffchaffs are likely largely overlapping and unlikely to be confined to the western range edge. 
 
      
 
