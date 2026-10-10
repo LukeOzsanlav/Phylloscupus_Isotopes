@@ -1,8 +1,7 @@
-## Author: XXX
+## Author: Luke Ozsanlav-Harris
 ## Created: 15/11/2022
 
 ## Analysis of the stable isotope, morphometric and phenological data from Chiffchaff and YBW
-
 
 ## Models run:
 ## 1. Isotope ~ Sub Species Group (all)
@@ -396,36 +395,8 @@ C1 <- ggplot(mapping= aes(x= wing, y = fit)) +
 
 
 
-#### 7.2 MODEL: Abietinus ####
-# ## Add interactions between the sub species and the other explanatory variables
-# ModAbie <- gls(isotope ~ scale(wing) + scale(Cap_yday),
-#                data=Abie, 
-#                method="ML")
-# 
-# # get model summaries
-# summary(ModAbie)
-# anova(ModAbie)
-# 
-# # plot the predictor effects
-# ModAbieeffects <- predictorEffects(ModAbie)
-# plot(ModAbieeffects)
-# 
-# ## plot of Abietinus relationship
-# ## use the effects package to extract the fit for the first variable
-# divisions <- 200
-# AebWing <- predictorEffects(ModAbie, focal.levels = divisions)
-# plot(AebWing[1])
-# effectsAeb <- AebWing[1]
-# fitAeb <- as.data.frame(cbind(effectsAeb[["wing"]][["fit"]], effectsAeb[["wing"]][["lower"]], 
-#                                effectsAeb[["wing"]][["upper"]], effectsAeb[["wing"]][["x"]]))
-# 
-# ## change the names to something meaningful
-# setnames(fitAeb, old = c("effectsAeb[[\"wing\"]][[\"fit\"]]", "effectsAeb[[\"wing\"]][[\"lower\"]]", "effectsAeb[[\"wing\"]][[\"upper\"]]"), 
-#          new = c("fit", "lower", "upper"))
 
-
-
-#### 7.3 MODEL: Tristis ####
+#### 7.2 MODEL: Tristis ####
 ## Add interactions between the sub species and the other explanatory variables
 ModTris <- gls(isotope ~ scale(wing) + scale(Cap_yday),
                data=Tris, 
@@ -456,7 +427,7 @@ setnames(fitTris, old = c("effectsTris[[\"wing\"]][[\"fit\"]]", "effectsTris[[\"
 
 
 
-#### 7.4 MODEL: Yellow-Brow ####
+#### 7.3 MODEL: Yellow-Brow ####
 ## Add interactions between the sub species and the other explanatory variables
 ModYBW <- gls(isotope ~ scale(wing) + scale(Cap_yday),
                data=Yellow, 
@@ -503,7 +474,7 @@ YB1 <- ggplot(mapping= aes(x= wing, y = fit)) +
 
 
 
-#### 7.5 PLOT: All Groups ####
+#### 7.4 PLOT: All Groups ####
 
 ## Bind the data used in the models
 PlotWing <- rbind(Coll, Yellow, Tris)
@@ -613,37 +584,7 @@ plot(ModColl2effects)
 
 
 
-#### 8.2 MODEL: Abietinus ####
-## Add interactions between the sub species and the other explanatory variables
-# ModAbie2 <- gls(Cap_yday ~ scale(wing),
-#                 data=Abie2, 
-#                 method="ML")
-# 
-# # get model summaries
-# summary(ModAbie2)
-# anova(ModAbie2)
-# 
-# # plot the predictor effects
-# ModAbie2effects <- predictorEffects(ModAbie2)
-# plot(ModAbie2effects)
-
-# ## plot of Abietinus relationship
-# ## use the effects package to extract the fit for the first variable
-# divisions <- 200
-# AebCond <- predictorEffects(ModAbie2, focal.levels = divisions)
-# plot(AebCond[2])
-# effectsAeb2 <- AebCond[2]
-# fitAeb2 <- as.data.frame(cbind(effectsAeb2[["condition"]][["fit"]], effectsAeb2[["condition"]][["lower"]], 
-#                                 effectsAeb2[["condition"]][["upper"]], effectsAeb2[["condition"]][["x"]]))
-# 
-# ## change the names to something meaningful
-# setnames(fitAeb2, old = c("effectsAeb2[[\"condition\"]][[\"fit\"]]", "effectsAeb2[[\"condition\"]][[\"lower\"]]", "effectsAeb2[[\"condition\"]][[\"upper\"]]"), 
-#          new = c("fit", "lower", "upper"))
-
-
-
-
-#### 8.3 MODEL: Tristis ####
+#### 8.2 MODEL: Tristis ####
 ## Add interactions between the sub species and the other explanatory variables
 ModTris2 <- gls(Cap_yday ~ scale(wing),
                 data=Tris2, 
@@ -673,7 +614,7 @@ plot(ModTris2effects)
 
 
 
-#### 8.4 MODEL: Yellow_brow ####
+#### 8.3 MODEL: Yellow_brow ####
 ## Add interactions between the sub species and the other explanatory variables
 ModYBW2 <- gls(Cap_yday ~ scale(wing),
                data=YBW2, 
@@ -702,7 +643,7 @@ plot(ModYBW2effects)
 
 
 
-# #### 8.5 PLOT: All Groups ####
+# #### 8.4 PLOT: All Groups ####
 # 
 # ## Bind the data used in the models
 # PlotCond <- rbind(Coll2, YBW2, Tris2, Abie2)

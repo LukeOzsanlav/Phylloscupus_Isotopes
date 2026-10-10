@@ -1,6 +1,7 @@
 ## Luke Ozsanlav-Harris
+## Date created: 07/10/2026
 
-## Find out how mnay species of Phyllosc are migraotyr according to BirdLife
+## Find out how many species of Phyllosc are migratory according to BirdLife
 
 ## Packages required
 pacman::p_load(tidyverse, data.table)

@@ -1,4 +1,4 @@
-## Author: XXX
+## Author: Luke Ozsanlav-Harris
 ## Created: 01/02/2023
 
 ## Create range map of YBW and Chiffchaffs for manuscript
